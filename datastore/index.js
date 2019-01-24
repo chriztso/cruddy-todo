@@ -42,11 +42,7 @@ exports.readOne = (id, callback) => {
   const dir = `${exports.dataDir}/${id}.txt`;
 
   fs.readFile(dir, 'utf8', (err, data) => {
-    if(err){
-      callback(err, null);
-    } else {
-      callback(null,  {'id': id, 'text': data});
-    }
+    err ? callback(err, null) : callback(null, {'id': id, 'text': data});
   });
   // if (!text) {
   //   callback(new Error(`No item with id: ${id}`));
@@ -60,18 +56,11 @@ exports.update = (id, text, callback) => {
   //save contents
   //update files
 
-    const dir = `${exports.dataDir}/${id}.txt`;
-    const flag = fs.constants.O_WRONLY | fs.constants.O_TRUNC;
-    fs.writeFile(dir, text, {flag}, (err) => {
-      if (err){
-        callback(err);
-      } else {
-        callback(null, {id, text});
-      }
-    });
- 
-
- 
+  const dir = `${exports.dataDir}/${id}.txt`;
+  const flag = fs.constants.O_WRONLY | fs.constants.O_TRUNC;
+  fs.writeFile(dir, text, {flag}, (err) => {
+    err ? callback(err) : callback(null, {id, text});
+  });
   // var item = items[id];
   // if (!item) {
   //   callback(new Error(`No item with id: ${id}`));
@@ -82,14 +71,10 @@ exports.update = (id, text, callback) => {
 };
 
 exports.delete = (id, callback) => {
-  
   const dir = `${exports.dataDir}/${id}.txt`;
   fs.unlink(dir, (err) => {
     err ? callback(err) : callback();
-});
-  
-  
-  
+  });
   // var item = items[id];
   // delete items[id];
   // if (!item) {
