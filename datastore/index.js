@@ -10,7 +10,6 @@ var items = {};
 exports.create = (text, callback) => {
   counter.getNextUniqueId((err, id) => {
   items[id] = text;
-  //console.log(items[id] + `this is the file name: "${id}.txt"`);
   fs.writeFile(`${exports.dataDir}/${id}.txt`, items[id], (err) => {
      if(err){
        throw err; 
@@ -22,27 +21,43 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  // var data = _.map(items, (text, id) => {
-  //   return { id, text };
-  // });
-  // console.log('data'data);
-  
 
-  const dir = `"${exports.dataDir}"`;
+  const dir = "./test/testData";
 
   fs.readdir(dir, (err, files) => {
-    
+    if(err){
+      callback(null, []);
+    }
+    var dataResults = []
+    files.forEach(file => {
+      var data = {};
+      data['id'] = file.slice(0, 5); 
+      data['text'] = file.slice(0, 5); 
+      dataResults.push(data); 
+    });
+    callback(null, dataResults);
   })
-  // callback(null, data);
+
 };
 
 exports.readOne = (id, callback) => {
   var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  const dir = `${exports.dataDir}/${id}.txt`;
+
+  fs.readFile(dir, 'utf8', (err, data) => {
+    if(err){
+      callback(err, null);
+    }
+   else{
+    callback(null,  {'id': id, 'text': data});
+
+  } 
+ })
+  // if (!text) {
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback(null, { id, text });
+  // }
 };
 
 exports.update = (id, text, callback) => {

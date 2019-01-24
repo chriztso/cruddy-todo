@@ -145,6 +145,7 @@ describe('todos', () => {
       const todoText = 'buy chocolate';
       todos.create(todoText, (err, createdTodo) => {
         const id = createdTodo.id;
+        console.log("this is the id", id)
         todos.readOne(id, (err, readTodo) => {
           expect(readTodo).to.deep.equal({ id, text: todoText });
           done();
