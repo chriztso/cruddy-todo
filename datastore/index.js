@@ -20,20 +20,40 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  const dir = "./test/testData";
-  fs.readdir(dir, (err, files) => {
+fs.readdir(exports.dataDir, (err, files) => {
     if (err) {
-      callback(null, []);
+      throw ('error reading data folder');
     }
-    var dataResults = [];
-    files.forEach(file => {
-      var data = {};
-      data['id'] = file.slice(0, 5); 
-      data['text'] = file.slice(0, 5); 
-      dataResults.push(data); 
+    var data = _.map(files, (file) => {
+      var id = path.basename(file, '.txt');
+      var filepath = path.join(exports.dataDir, file);
+      return readFilePromise(filepath).then(fileData => {
+        return {
+          id: id,
+          text: fileData.toString()
+        };
+      });
     });
-    callback(null, dataResults);
+    Promise.all(data)
+      .then(items => callback(null, items), err => callback(err));
   });
+  
+
+
+  // const dir = "./test/testData";
+  // fs.readdir(dir, (err, files) => {
+  //   if (err) {
+  //     callback(null, []);
+  //   }
+  //   var dataResults = [];
+  //   files.forEach(file => {
+  //     var data = {};
+  //     data['id'] = file.slice(0, 5); 
+  //     data['text'] = file.slice(0, 5); 
+  //     dataResults.push(data); 
+  //   });
+  //   callback(null, dataResults);
+  // });
 
 };
 
